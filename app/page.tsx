@@ -2,12 +2,13 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(120,120,120,0.18),transparent_42%)]" />
-      <div className="absolute left-1/2 top-0 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
 
       <header className="relative z-20 flex items-center justify-between border-b border-white/10 px-6 py-6 md:px-12">
-        <div className="text-2xl font-bold tracking-[0.2em]">VOXGARD</div>
+        <div className="text-2xl font-bold tracking-[0.2em]">
+          VOXGARD
+        </div>
 
-        <nav className="hidden items-center gap-8 text-sm text-gray-300 md:flex">
+        <nav className="hidden md:flex items-center gap-8 text-sm text-gray-300">
           <a href="#">Solutions</a>
           <a href="#">Technology</a>
           <a href="#">Pricing</a>
@@ -22,12 +23,14 @@ export default function Home() {
 
         <h1 className="mt-10 max-w-6xl text-6xl font-bold leading-tight md:text-8xl">
           AI CALL CENTER
-          <span className="block text-gray-500">& VIDEO ANALYTICS</span>
+          <span className="block text-gray-500">
+            & VIDEO ANALYTICS
+          </span>
         </h1>
 
         <p className="mt-8 max-w-3xl text-lg leading-relaxed text-gray-400 md:text-xl">
-          Intelligent voice automation, real-time monitoring, AI infrastructure
-          and automation systems built for scalable businesses.
+          Intelligent voice automation, real-time monitoring,
+          AI infrastructure and automation systems built for scalable businesses.
         </p>
 
         <div className="mt-12 flex flex-col gap-4 md:flex-row">
@@ -40,70 +43,73 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="mt-24 grid w-full max-w-6xl gap-6 md:grid-cols-3">
-          {[
-            ["01", "AI Voice Agents", "Human-like multilingual AI assistants with CRM integration, scheduling and real-time workflows."],
-            ["02", "Video Intelligence", "AI-powered monitoring for warehouses, retail stores, construction sites and enterprise operations."],
-            ["03", "Automation Systems", "Connect databases, notifications, AI decision making and workflows into one ecosystem."],
-          ].map(([number, title, text]) => (
-            <div key={title} className="rounded-3xl border border-white/10 bg-white/5 p-8 text-left backdrop-blur-xl">
-              <div className="mb-4 text-sm text-gray-500">{number}</div>
-              <h2 className="mb-4 text-2xl font-semibold">{title}</h2>
-              <p className="leading-relaxed text-gray-400">{text}</p>
-            </div>
-          ))}
-        </div>
+        <section className="mt-24 grid w-full max-w-6xl gap-6 md:grid-cols-3">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+            <h2 className="mb-4 text-2xl font-semibold">
+              AI Voice Agents
+            </h2>
 
-        <section className="mt-28 grid w-full max-w-6xl gap-6 rounded-[40px] border border-white/10 bg-white/5 p-10 backdrop-blur-2xl md:grid-cols-4">
-          {[
-            ["24/7", "AI Availability"],
-            ["99%", "Automation Accuracy"],
-            ["50+", "Integrations"],
-            ["AI", "Powered Infrastructure"],
-          ].map(([value, label]) => (
-            <div key={label}>
-              <div className="text-5xl font-bold">{value}</div>
-              <div className="mt-2 text-gray-400">{label}</div>
-            </div>
-          ))}
-        </section>
+            <p className="text-gray-400">
+              Human-like multilingual AI assistants with CRM integration,
+              scheduling and automation.
+            </p>
+          </div>
 
-        <section className="mt-28 w-full max-w-6xl text-left">
-          <h2 className="text-center text-4xl font-bold md:text-6xl">
-            Simple Plans for Growing Businesses
-          </h2>
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+            <h2 className="mb-4 text-2xl font-semibold">
+              Video Intelligence
+            </h2>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {[
-              ["Starter", "$499/mo", "For small businesses starting with AI calls."],
-              ["Growth", "$999/mo", "For companies that need CRM and automation."],
-              ["Enterprise", "Custom", "For call center, video analytics and custom AI systems."],
-            ].map(([plan, price, description]) => (
-              <div key={plan} className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
-                <h3 className="text-2xl font-semibold">{plan}</h3>
-                <div className="mt-6 text-4xl font-bold">{price}</div>
-                <p className="mt-6 leading-relaxed text-gray-400">{description}</p>
-                <button className="mt-8 w-full rounded-2xl bg-white px-6 py-4 font-semibold text-black transition hover:bg-gray-200">
-                  Get Started
-                </button>
-              </div>
-            ))}
+            <p className="text-gray-400">
+              AI-powered monitoring for enterprise infrastructure,
+              warehouses and retail operations.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+            <h2 className="mb-4 text-2xl font-semibold">
+              Automation Systems
+            </h2>
+
+            <p className="text-gray-400">
+              Connect workflows, notifications and AI systems
+              into one ecosystem.
+            </p>
           </div>
         </section>
 
-        <section className="mt-28 w-full max-w-4xl rounded-[40px] border border-white/10 bg-white/5 p-10 text-center backdrop-blur-2xl">
-          <h2 className="text-4xl font-bold md:text-5xl">
-            Ready to automate your business?
+        <section className="mt-28 w-full max-w-5xl rounded-[40px] border border-white/10 bg-white/5 p-10 backdrop-blur-2xl">
+          <h2 className="text-center text-4xl font-bold md:text-5xl">
+            Contact Voxgard
           </h2>
 
-          <p className="mt-6 text-gray-400">
-            Build an AI call center, connect your CRM, monitor operations
-            and automate customer communication.
+          <p className="mt-4 text-center text-gray-400">
+            Request a demo or contact our AI infrastructure team.
           </p>
 
-          <button className="mt-10 rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:bg-gray-200">
-            Contact Voxgard
-          </button>
+          <form className="mt-10 grid gap-6">
+            <input
+              type="text"
+              placeholder="Your Name"
+              className="rounded-2xl border border-white/10 bg-black/40 px-6 py-4 outline-none"
+            />
+
+            <input
+              type="email"
+              placeholder="Email Address"
+              className="rounded-2xl border border-white/10 bg-black/40 px-6 py-4 outline-none"
+            />
+
+            <textarea
+              placeholder="Tell us about your business..."
+              rows={6}
+              className="rounded-2xl border border-white/10 bg-black/40 px-6 py-4 outline-none"
+            />
+
+            <button className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:bg-gray-200">
+              Send Request
+            </button>
+          </form>
         </section>
 
         <footer className="mt-24 w-full border-t border-white/10 py-10 text-center text-sm text-gray-500">
