@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050816;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +12,140 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body {
+  background: #050816;
+  color: var(--foreground);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.35);
+  color: #fff;
+}
+
+@keyframes vox-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(8%, -10%) scale(1.12); }
+  66%      { transform: translate(-9%, 7%) scale(0.95); }
+}
+
+@keyframes vox-aurora {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.55; }
+  50%      { transform: translate(-6%, 6%) rotate(180deg); opacity: 0.85; }
+}
+
+@keyframes vox-float {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  10%  { opacity: var(--p-opacity, 0.55); }
+  90%  { opacity: var(--p-opacity, 0.55); }
+  100% { transform: translate3d(0, -110vh, 0); opacity: 0; }
+}
+
+@keyframes vox-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes vox-spin-rev {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes vox-pulse {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes vox-pulse-soft {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.75; }
+}
+
+@keyframes vox-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@keyframes vox-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.vox-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.vox-noise {
+  background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+.vox-gradient-border {
+  position: relative;
+}
+.vox-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(59,130,246,0.55), rgba(139,92,246,0.55), rgba(236,72,153,0.45));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+.vox-gradient-border:hover::before {
+  opacity: 1;
+}
+
+.vox-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #3B82F6 0%,
+    #8B5CF6 25%,
+    #EC4899 50%,
+    #A855F7 75%,
+    #06B6D4 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: vox-shimmer 8s ease-in-out infinite;
+}
+
+.vox-glow-card {
+  position: relative;
+  isolation: isolate;
+}
+.vox-glow-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    420px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(139, 92, 246, 0.18),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+.vox-glow-card:hover::after {
+  opacity: 1;
+}
+
+.vox-rise {
+  animation: vox-rise 0.9s ease-out both;
 }
