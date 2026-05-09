@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Voxgard | AI Call Center & Video Analytics",
+  title: "Voxgard | AI Receptionist for Dental, Med Spa, HVAC & Home Services",
   description:
-    "AI call center, video analytics and automation systems for modern businesses.",
+    "Voxgard's AI answers every call, books appointments and syncs with your CRM — 24/7 in English & Spanish. Built for US service businesses.",
 };
 
 export default function RootLayout({
