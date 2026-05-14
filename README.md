@@ -49,14 +49,13 @@ A working content management panel at `/admin`. Edits seven JSON files under `ap
 - **Voice audio** (`app/data/voices.json` → `audioSrc`): UI plays animated waveform only; real audio files are not yet wired. Add `mp3` files to `public/uploads/voices/` and reference them by URL in the CMS to enable real playback.
 - **Public auth** (`/login`, `/register`): OAuth buttons are UI-only.
 - **Dashboard**: page shells exist, no API integration.
-- **Next.js 16 deprecation**: `middleware.ts` triggers a warning — convention is renamed to `proxy.ts`. Functional today, migrate before Next.js 17.
 
 ## Architecture notes
 
 - `app/sections/` — eight reusable section components. Vision-a uses 3 (Voice, ROI, Plans) plus inline sections; vision-b and vision-c share the other 5.
 - `app/themes/` — three theme token sets (one per vision).
 - `app/data/` — single source of truth for all editable content. Read by sections, written by admin CMS.
-- `middleware.ts` — gates `/admin/*` and `/api/admin/*` with HMAC session cookie.
+- `proxy.ts` (Next.js 16 convention, formerly `middleware.ts`) — gates `/admin/*` and `/api/admin/*` with HMAC session cookie.
 
 ## Documentation
 

@@ -1,14 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { voices, type Voice } from "../data/voices";
 
-/**
- * VoiceDemoSection — interactive AI voice showcase.
- * One voice plays at a time. Audio is simulated via animated waveform
- * until real recordings are wired into voice.audioSrc.
- */
+// Interactive AI voice showcase. One voice plays at a time.
+// If voice.audioSrc is present, HTMLAudioElement plays it; otherwise the
+// waveform animates for voice.durationS seconds as a visual-only preview.
 export default function VoiceDemoSection() {
   const [playingId, setPlayingId] = useState<string | null>(null);
 
@@ -53,7 +51,7 @@ export default function VoiceDemoSection() {
       <div className="mt-8 flex justify-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-soft)] bg-white/60 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-[var(--muted)] backdrop-blur-xl">
           <span className="h-1 w-1 rounded-full bg-[var(--brand-violet)]" />
-          Concept previews · real audio in private demo
+          Live previews · production voices in private demo
         </span>
       </div>
     </section>
@@ -71,12 +69,30 @@ function VoiceCard({
   onToggle: () => void;
   indexDelay: number;
 }) {
-  // Auto-stop after duration when playing
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
-    if (!playing) return;
+    const el = audioRef.current;
+    if (!playing) {
+      // Either parent paused us or a sibling started — stop and reset.
+      if (el) {
+        el.pause();
+        el.currentTime = 0;
+      }
+      return;
+    }
+
+    if (el) {
+      el.currentTime = 0;
+      const p = el.play();
+      // play() returns a Promise in modern browsers; ignore autoplay-block errors.
+      if (p && typeof p.catch === "function") p.catch(() => {});
+      return;
+    }
+
+    // Visual-only fallback (no audioSrc): auto-stop after the configured duration.
     const t = window.setTimeout(() => onToggle(), voice.durationS * 1000);
     return () => window.clearTimeout(t);
-    // onToggle stays stable enough; effect resets when playing flips
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, voice.durationS]);
 
@@ -94,6 +110,16 @@ function VoiceCard({
           : undefined,
       }}
     >
+      {voice.audioSrc && (
+        <audio
+          ref={audioRef}
+          src={voice.audioSrc}
+          preload="none"
+          onEnded={() => {
+            if (playing) onToggle();
+          }}
+        />
+      )}
       {/* Soft accent glow when playing */}
       <motion.div
         className="pointer-events-none absolute inset-0 rounded-3xl"

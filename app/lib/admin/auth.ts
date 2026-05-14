@@ -1,6 +1,6 @@
 /**
  * Edge- and Node-compatible admin auth.
- * Uses Web Crypto API (works in middleware Edge runtime + API routes).
+ * Uses Web Crypto API (works in proxy/middleware Edge runtime + API routes).
  */
 
 export const SESSION_COOKIE = "voxgard_admin";

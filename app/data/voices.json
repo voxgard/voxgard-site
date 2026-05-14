@@ -5,7 +5,8 @@
     "style": "Warm Professional",
     "language": "English (US)",
     "accent": "#6FA8E8",
-    "durationS": 12,
+    "durationS": 5,
+    "audioSrc": "/voices/aurora.m4a",
     "preview": "Hi, this is Aurora — thanks for calling Northstar. Can I book your appointment today?"
   },
   {
@@ -14,7 +15,8 @@
     "style": "Luxury Med Spa",
     "language": "English (UK)",
     "accent": "#C5BBED",
-    "durationS": 11,
+    "durationS": 5,
+    "audioSrc": "/voices/lyra.m4a",
     "preview": "Welcome to Brightline Aesthetics — I can schedule your consultation right now."
   },
   {
@@ -23,7 +25,8 @@
     "style": "Friendly Dispatcher",
     "language": "English (US)",
     "accent": "#7CC9DC",
-    "durationS": 10,
+    "durationS": 6,
+    "audioSrc": "/voices/nova.m4a",
     "preview": "Hey, Nova here at Apex HVAC. Want me to dispatch a tech this afternoon?"
   },
   {
@@ -32,7 +35,8 @@
     "style": "Bilingual Receptionist",
     "language": "English / Español",
     "accent": "#9B8FE0",
-    "durationS": 13,
+    "durationS": 7,
+    "audioSrc": "/voices/sofia.m4a",
     "preview": "Hola, soy Sofía — puedo agendar tu cita ahora mismo. I can also continue in English."
   }
 ]

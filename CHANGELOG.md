@@ -2,10 +2,19 @@
 
 ## 2026-05-14
 
+### Added
+- **Voice audio playback** — four placeholder TTS files (`public/voices/{aurora,lyra,nova,sofia}.m4a`) generated locally with macOS `say` + `afconvert`. Wired through `voice.audioSrc` in `app/data/voices.json`. `VoiceDemoSection` now uses an `HTMLAudioElement` instead of a fake timer — play/pause/auto-stop on `ended` all work for real.
+- For production-grade voices, replace these files with ElevenLabs / OpenAI TTS output (same path, same JSON keys).
+
+### Changed
+- **Next.js 16 convention migration:** renamed `middleware.ts` → `proxy.ts`, exported function `middleware` → `proxy`. Deprecation warning gone. Behaviour unchanged.
+
 ### Verified
 - Admin CMS smoke-test end-to-end (login, content read/write, versioning, image upload). All checks pass — see [docs/admin.md](docs/admin.md#verified-behavior).
 - Vision A, B, C all render (HTTP 200, no runtime errors).
-- Middleware correctly redirects unauthenticated `/admin` requests to `/admin/login`.
+- Proxy correctly redirects unauthenticated `/admin` → `/admin/login` and returns 401 JSON for unauthed `/api/admin/*`.
+- All four voice files served (HTTP 200) and referenced in vision-a HTML.
+- Dev server (`npm run dev`) starts clean in 339ms, zero warnings in log.
 
 ### Configured
 - Added `.env.local` with generated `ADMIN_PASSWORD` and `ADMIN_SECRET` (gitignored — values not committed). Restart `npm run dev` to load new values.
@@ -16,10 +25,9 @@
 - New `CHANGELOG.md` — this file.
 
 ### Known (unfixed)
-- Voice cards in `VoiceDemoSection` have no real audio (`voice.audioSrc` empty for all 4).
 - `/login`, `/register` OAuth buttons are UI-only — no backend.
 - `/dashboard/*` pages are visual shells — no API.
-- `middleware.ts` triggers Next.js 16 deprecation warning (should rename to `proxy.ts` before Next.js 17).
+- Voice samples are macOS-synthesised placeholders; quality is robotic. Replace with real TTS for prod.
 
 ## 2026-05-14 — earlier
 - `54425ac` Add 3-vision system, sections refactor, and admin CMS (58 files, +5571/-1232).

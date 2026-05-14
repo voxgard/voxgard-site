@@ -7,7 +7,7 @@ Lightweight built-in CMS for editing the site's JSON-backed content without a de
 - Single password (`ADMIN_PASSWORD` env var, falls back to `voxgard` if unset — **do not ship without setting it**).
 - Constant-time comparison (`ctEqual` in `app/lib/admin/auth.ts`).
 - On success, server issues an HMAC-SHA256 token (`<expires>.<sig>`) signed with `ADMIN_SECRET`, set as `voxgard_admin` cookie (httpOnly, lax, 30-day TTL).
-- `middleware.ts` (Edge runtime, Web Crypto) verifies the cookie on every `/admin/*` and `/api/admin/*` request. Unauthenticated page requests redirect to `/admin/login`; API requests get `401 {"error":"unauthorized"}`.
+- `proxy.ts` (Edge runtime, Web Crypto) verifies the cookie on every `/admin/*` and `/api/admin/*` request. Unauthenticated page requests redirect to `/admin/login`; API requests get `401 {"error":"unauthorized"}`. This file was named `middleware.ts` until Next.js 16 renamed the convention.
 
 **Logout:** `DELETE /api/admin/auth` clears the cookie.
 
