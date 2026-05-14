@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Voxgard site
 
-## Getting Started
+Marketing site for Voxgard — AI infrastructure (call center, video analytics, business automation). Next.js 16, App Router, Turbopack.
 
-First, run the development server:
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # fill in admin password (see Admin CMS below)
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | Purpose |
+|---|---|
+| `/` | Vision picker (chooses one of three design directions) |
+| `/vision-a` | **Selected direction.** Apple-cinematic layout. |
+| `/vision-b`, `/vision-c` | Alternative designs (holographic AI / enterprise luxury). |
+| `/login`, `/register` | Public auth UI — **skeleton only, not wired.** |
+| `/dashboard/*` | Agents, analytics, billing, calls, CRM, settings — **UI shells, no data wiring.** |
+| `/admin` | Content CMS — see below. |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Admin CMS
 
-## Learn More
+A working content management panel at `/admin`. Edits seven JSON files under `app/data/` live, with versioning and image uploads.
 
-To learn more about Next.js, take a look at the following resources:
+**Setup:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Copy `.env.example` → `.env.local` and set:
+   ```
+   ADMIN_PASSWORD=<long random string>
+   ADMIN_SECRET=<longer random string for HMAC>
+   ```
+   Generate values:
+   ```bash
+   python3 -c "import secrets; print('ADMIN_PASSWORD='+secrets.token_urlsafe(16)); print('ADMIN_SECRET='+secrets.token_urlsafe(32))"
+   ```
+2. Restart dev server so Next.js picks up env.
+3. Visit `/admin/login`, enter password, you'll be redirected to `/admin`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Editable keys** (`app/data/<key>.json`):
+`copy`, `plans`, `addons`, `industries`, `voices`, `roi`, `theme`
 
-## Deploy on Vercel
+**How it works** — see [docs/admin.md](docs/admin.md).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Known limitations
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Voice audio** (`app/data/voices.json` → `audioSrc`): UI plays animated waveform only; real audio files are not yet wired. Add `mp3` files to `public/uploads/voices/` and reference them by URL in the CMS to enable real playback.
+- **Public auth** (`/login`, `/register`): OAuth buttons are UI-only.
+- **Dashboard**: page shells exist, no API integration.
+- **Next.js 16 deprecation**: `middleware.ts` triggers a warning — convention is renamed to `proxy.ts`. Functional today, migrate before Next.js 17.
+
+## Architecture notes
+
+- `app/sections/` — eight reusable section components. Vision-a uses 3 (Voice, ROI, Plans) plus inline sections; vision-b and vision-c share the other 5.
+- `app/themes/` — three theme token sets (one per vision).
+- `app/data/` — single source of truth for all editable content. Read by sections, written by admin CMS.
+- `middleware.ts` — gates `/admin/*` and `/api/admin/*` with HMAC session cookie.
+
+## Documentation
+
+See also: [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md), [docs/admin.md](docs/admin.md), [CHANGELOG.md](CHANGELOG.md).
