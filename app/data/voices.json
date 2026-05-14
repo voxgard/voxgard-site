@@ -1,0 +1,38 @@
+[
+  {
+    "id": "aurora",
+    "name": "Aurora",
+    "style": "Warm Professional",
+    "language": "English (US)",
+    "accent": "#6FA8E8",
+    "durationS": 12,
+    "preview": "Hi, this is Aurora — thanks for calling Northstar. Can I book your appointment today?"
+  },
+  {
+    "id": "lyra",
+    "name": "Lyra",
+    "style": "Luxury Med Spa",
+    "language": "English (UK)",
+    "accent": "#C5BBED",
+    "durationS": 11,
+    "preview": "Welcome to Brightline Aesthetics — I can schedule your consultation right now."
+  },
+  {
+    "id": "nova",
+    "name": "Nova",
+    "style": "Friendly Dispatcher",
+    "language": "English (US)",
+    "accent": "#7CC9DC",
+    "durationS": 10,
+    "preview": "Hey, Nova here at Apex HVAC. Want me to dispatch a tech this afternoon?"
+  },
+  {
+    "id": "sofia",
+    "name": "Sofia",
+    "style": "Bilingual Receptionist",
+    "language": "English / Español",
+    "accent": "#9B8FE0",
+    "durationS": 13,
+    "preview": "Hola, soy Sofía — puedo agendar tu cita ahora mismo. I can also continue in English."
+  }
+]

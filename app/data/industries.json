@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Dental",
+    "accent": "#7CC9DC",
+    "blurb": "After-hours new-patient calls, insurance triage, recall booking and emergency routing.",
+    "points": ["New patient intake", "Insurance verification", "Recall reminders"]
+  },
+  {
+    "name": "Med Spa",
+    "accent": "#9B8FE0",
+    "blurb": "Consult booking, treatment FAQs, no-show recovery and aftercare follow-ups.",
+    "points": ["Consult booking", "Treatment FAQs", "No-show recovery"]
+  },
+  {
+    "name": "HVAC",
+    "accent": "#6FA8E8",
+    "blurb": "Emergency dispatch, quote requests and appointment confirmation 24/7.",
+    "points": ["Emergency dispatch", "Quote requests", "Service confirms"]
+  },
+  {
+    "name": "Home Services",
+    "accent": "#B5A0E5",
+    "blurb": "Plumbing, electrical, roofing — qualify and route every lead in seconds.",
+    "points": ["Lead qualification", "Job dispatch", "ServiceTitan sync"]
+  },
+  {
+    "name": "Legal",
+    "accent": "#1E3A8A",
+    "blurb": "Intake screening, conflict checks and consultation booking with full transcripts.",
+    "points": ["Intake screening", "Conflict checks", "Consult booking"]
+  },
+  {
+    "name": "Real Estate",
+    "accent": "#A8E0EA",
+    "blurb": "Buyer/seller intake, listing inquiries and instant showing scheduling.",
+    "points": ["Listing inquiries", "Buyer intake", "Showing schedule"]
+  }
+]

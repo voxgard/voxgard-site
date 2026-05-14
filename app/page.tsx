@@ -7,6 +7,7 @@ const VISIONS = [
     tag: "Apple cinematic",
     desc: "Soft volumetric light. Sticky storytelling. Calm elegance.",
     accent: "linear-gradient(135deg, #6FA8E8, #9B8FE0, #7CC9DC)",
+    selected: true,
   },
   {
     href: "/vision-b",
@@ -14,6 +15,7 @@ const VISIONS = [
     tag: "Holographic AI OS",
     desc: "Floating glass layers. Dynamic AI viz. Iridescent depth.",
     accent: "linear-gradient(135deg, #5EEAD4, #818CF8, #F0ABFC)",
+    selected: false,
   },
   {
     href: "/vision-c",
@@ -21,6 +23,7 @@ const VISIONS = [
     tag: "Enterprise luxury",
     desc: "Massive whitespace. Bold typography. Sophisticated quiet.",
     accent: "linear-gradient(135deg, #1E3A8A, #0F172A)",
+    selected: false,
   },
 ];
 
@@ -39,8 +42,14 @@ export default function Index() {
             />
             VOXGARD
           </div>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--subtle)]">
-            Design exploration
+          <span
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-300/60 bg-emerald-50/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-emerald-700"
+          >
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+              style={{ boxShadow: "0 0 8px rgba(16,185,129,0.7)" }}
+            />
+            Selected direction: Vision A
           </span>
         </header>
 
@@ -61,15 +70,27 @@ export default function Index() {
               <Link
                 key={v.href}
                 href={v.href}
-                className="group relative overflow-hidden rounded-3xl border border-[var(--border-soft)] bg-white/70 p-7 backdrop-blur-xl transition-all duration-700 [transition-timing-function:cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1 hover:shadow-[0_24px_60px_-20px_rgba(31,60,122,0.18)]"
+                className={`group relative overflow-hidden rounded-3xl border bg-white/70 p-7 backdrop-blur-xl transition-all duration-700 [transition-timing-function:cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1 hover:shadow-[0_24px_60px_-20px_rgba(31,60,122,0.18)] ${
+                  v.selected
+                    ? "border-emerald-400/50 ring-2 ring-emerald-300/40"
+                    : "border-[var(--border-soft)]"
+                }`}
               >
                 <div
                   className="absolute -right-12 -top-12 h-40 w-40 rounded-full opacity-30 blur-2xl transition-opacity duration-700 group-hover:opacity-60"
                   style={{ background: v.accent }}
                 />
                 <div className="relative">
-                  <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--subtle)]">
-                    {v.name}
+                  <div className="flex items-center justify-between">
+                    <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--subtle)]">
+                      {v.name}
+                    </div>
+                    {v.selected && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50/80 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-emerald-700 ring-1 ring-emerald-300/60">
+                        <span className="h-1 w-1 rounded-full bg-emerald-500" />
+                        Selected
+                      </span>
+                    )}
                   </div>
                   <h3 className="mt-3 text-2xl font-semibold tracking-tight text-[var(--ink)]">
                     {v.tag}

@@ -41,6 +41,12 @@
   --mx: 50%;
   --my: 50%;
 
+  /* Unified motion */
+  --vox-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --vox-dur-fast: 320ms;
+  --vox-dur: 540ms;
+  --vox-dur-slow: 760ms;
+
   --background: var(--bg-primary);
   --foreground: var(--ink);
 }
@@ -72,11 +78,106 @@ body {
 
 /* ========== Apple-like ease ========== */
 .vox-ease {
-  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-  transition-duration: 700ms;
+  transition-timing-function: var(--vox-ease);
+  transition-duration: var(--vox-dur-slow);
+}
+
+/* ========== Depth tiers ==========
+   Layered cinematic shadows + glass.
+   Use via class — no component needed. */
+.vox-depth-1 {
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 8px 22px -8px rgba(31, 60, 122, 0.12);
+}
+.vox-depth-2 {
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.05),
+    0 18px 40px -16px rgba(31, 60, 122, 0.18),
+    0 8px 16px -8px rgba(31, 60, 122, 0.08);
+}
+.vox-depth-3 {
+  box-shadow:
+    0 4px 8px rgba(15, 23, 42, 0.05),
+    0 32px 70px -22px rgba(31, 60, 122, 0.24),
+    0 14px 28px -10px rgba(31, 60, 122, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.vox-depth-3:hover { transform: translateY(-1px); }
+
+.vox-lift {
+  transition: transform var(--vox-dur) var(--vox-ease),
+              box-shadow var(--vox-dur) var(--vox-ease);
+}
+.vox-lift:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 6px 12px rgba(15, 23, 42, 0.06),
+    0 36px 80px -24px rgba(31, 60, 122, 0.28),
+    0 16px 32px -12px rgba(31, 60, 122, 0.14);
+}
+
+/* ========== Cinematic stage — perspective container ========== */
+.vox-stage {
+  perspective: 1600px;
+  perspective-origin: 50% 30%;
+  transform-style: preserve-3d;
+}
+
+.vox-depth-layer {
+  transform-style: preserve-3d;
+}
+
+/* ========== Theme A — readability overrides ==========
+   Vision-A lives over a cinematic gradient with translucent glass panels.
+   Default tokens (--subtle, --muted) become unreadable. Bump them darker
+   only in this scope, leaving vision-b/c untouched. */
+.theme-a {
+  --subtle: #5B6573;        /* was #94A3B8 — ~3:1 → ~5:1 contrast on white */
+  --muted: #475569;         /* was #64748B */
+  --whisper: #94A3B8;       /* was #CBD5E1 — for true decorative use only */
+  --border-soft: rgba(15, 23, 42, 0.10);
+  --border: rgba(15, 23, 42, 0.14);
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-strong: rgba(255, 255, 255, 0.88);
+  --glass-soft: rgba(255, 255, 255, 0.55);
+}
+
+/* Glass panels in theme-a get slightly stronger backdrop for legibility. */
+.theme-a .vox-glass {
+  background: var(--glass);
+  backdrop-filter: blur(32px) saturate(170%);
+  -webkit-backdrop-filter: blur(32px) saturate(170%);
+}
+.theme-a .vox-glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: blur(40px) saturate(175%);
+  -webkit-backdrop-filter: blur(40px) saturate(175%);
 }
 
 /* ========== Animations ========== */
+@keyframes vox-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(4%, -3%, 0) scale(1.05); }
+}
+
+@keyframes vox-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-3%, 4%, 0) scale(1.04); }
+}
+
+@keyframes vox-drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(2%, -2%, 0) scale(1.03); }
+}
+
+@keyframes vox-drift-up {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.5; }
+  100% { transform: translate3d(0, -120vh, 0); opacity: 0; }
+}
+
 @keyframes vox-blob {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%      { transform: translate(6%, -8%) scale(1.08); }
@@ -131,6 +232,16 @@ body {
 @keyframes vox-breathe {
   0%, 100% { transform: scale(1); filter: blur(40px); }
   50%      { transform: scale(1.06); filter: blur(48px); }
+}
+
+@keyframes vox-wave {
+  0%, 100% { transform: scaleY(0.5); }
+  50%      { transform: scaleY(1.3); }
+}
+
+@keyframes vox-count-pop {
+  0%   { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0);   opacity: 1; }
 }
 
 /* ========== Background patterns ========== */
@@ -328,4 +439,60 @@ body {
 }
 .vox-input::placeholder {
   color: var(--subtle);
+}
+
+/* ========== ROI slider ========== */
+.vox-roi-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-blue),
+    var(--brand-violet),
+    var(--brand-cyan)
+  );
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+.vox-roi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 6px 16px -4px rgba(31, 60, 122, 0.3),
+              0 0 0 4px rgba(155, 143, 224, 0.15);
+  cursor: grab;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+              box-shadow 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.vox-roi-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 22px -4px rgba(31, 60, 122, 0.4),
+              0 0 0 6px rgba(155, 143, 224, 0.2);
+}
+.vox-roi-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 6px 16px -4px rgba(31, 60, 122, 0.3),
+              0 0 0 4px rgba(155, 143, 224, 0.15);
+  cursor: grab;
+}
+
+/* ========== Reduced motion ========== */
+@media (prefers-reduced-motion: reduce) {
+  .vox-depth-layer,
+  [style*="vox-drift-"],
+  [style*="vox-pulse-soft"],
+  [style*="vox-shimmer"],
+  [style*="vox-breathe"] {
+    animation: none !important;
+  }
 }

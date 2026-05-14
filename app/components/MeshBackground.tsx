@@ -45,43 +45,44 @@ export default function MeshBackground({ variant = "full" }: { variant?: Variant
         }}
       />
 
-      {/* Soft pastel orbs — Apple Vision Pro style */}
+      {/* Soft pastel orbs — static cinematic.
+          No drift; only ultra-slow ambient breath + cursor parallax. */}
       <div
-        className="absolute -left-32 -top-40 h-[700px] w-[700px] rounded-full blur-[140px]"
+        className="absolute -left-32 -top-40 h-[760px] w-[760px] rounded-full blur-[160px]"
         style={{
           background:
-            "radial-gradient(circle, #A8C9F0 0%, rgba(168,201,240,0.4) 50%, transparent 75%)",
-          opacity,
-          animation: "vox-blob 28s ease-in-out infinite, vox-breathe 9s ease-in-out infinite",
+            "radial-gradient(circle, #A8C9F0 0%, rgba(168,201,240,0.35) 50%, transparent 78%)",
+          opacity: opacity * 0.95,
+          animation: "vox-pulse-soft 22s ease-in-out infinite",
           transform: "translate(var(--px), var(--py))",
           willChange: "transform",
-          transition: "transform 1.5s cubic-bezier(0.32, 0.72, 0, 1)",
+          transition: "transform 2s cubic-bezier(0.32, 0.72, 0, 1)",
         }}
       />
       <div
-        className="absolute -right-32 top-1/4 h-[640px] w-[640px] rounded-full blur-[140px]"
+        className="absolute -right-40 top-[18%] h-[700px] w-[700px] rounded-full blur-[160px]"
         style={{
           background:
-            "radial-gradient(circle, #C5BBED 0%, rgba(197,187,237,0.4) 50%, transparent 75%)",
-          opacity: opacity * 0.95,
-          animation: "vox-blob 32s ease-in-out infinite",
+            "radial-gradient(circle, #C5BBED 0%, rgba(197,187,237,0.35) 50%, transparent 78%)",
+          opacity: opacity * 0.9,
+          animation: "vox-pulse-soft 26s ease-in-out infinite",
           animationDelay: "-9s",
-          transform: "translate(calc(var(--px) * -0.6), calc(var(--py) * -0.6))",
+          transform: "translate(calc(var(--px) * -0.5), calc(var(--py) * -0.5))",
           willChange: "transform",
-          transition: "transform 1.6s cubic-bezier(0.32, 0.72, 0, 1)",
+          transition: "transform 2.1s cubic-bezier(0.32, 0.72, 0, 1)",
         }}
       />
       <div
-        className="absolute bottom-[-10%] left-1/4 h-[560px] w-[560px] rounded-full blur-[150px]"
+        className="absolute bottom-[-12%] left-1/4 h-[620px] w-[620px] rounded-full blur-[170px]"
         style={{
           background:
-            "radial-gradient(circle, #A8E0EA 0%, rgba(168,224,234,0.35) 50%, transparent 75%)",
-          opacity: opacity * 0.85,
-          animation: "vox-blob 30s ease-in-out infinite",
-          animationDelay: "-16s",
-          transform: "translate(calc(var(--px) * 0.5), calc(var(--py) * -0.4))",
+            "radial-gradient(circle, #A8E0EA 0%, rgba(168,224,234,0.3) 50%, transparent 78%)",
+          opacity: opacity * 0.8,
+          animation: "vox-pulse-soft 30s ease-in-out infinite",
+          animationDelay: "-14s",
+          transform: "translate(calc(var(--px) * 0.4), calc(var(--py) * -0.35))",
           willChange: "transform",
-          transition: "transform 1.7s cubic-bezier(0.32, 0.72, 0, 1)",
+          transition: "transform 2.2s cubic-bezier(0.32, 0.72, 0, 1)",
         }}
       />
       <div

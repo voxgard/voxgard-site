@@ -1,0 +1,51 @@
+[
+  {
+    "id": "premium-voices",
+    "name": "Premium Voices",
+    "price": "$29",
+    "pricePerMonth": 29,
+    "unit": "/ month",
+    "desc": "Unlock luxury voice cast — warm, executive and concierge tones."
+  },
+  {
+    "id": "multilingual",
+    "name": "Multilingual Pack",
+    "price": "$49",
+    "pricePerMonth": 49,
+    "unit": "/ month",
+    "desc": "30+ languages, native prosody, automatic detection on pickup."
+  },
+  {
+    "id": "crm-integrations",
+    "name": "CRM Integrations",
+    "price": "$39",
+    "pricePerMonth": 39,
+    "unit": "/ month",
+    "desc": "HubSpot, Salesforce, GHL, ServiceTitan and Jobber sync."
+  },
+  {
+    "id": "after-hours",
+    "name": "After-hours AI",
+    "price": "$19",
+    "pricePerMonth": 19,
+    "unit": "/ month",
+    "desc": "Out-of-hours routing with emergency triage and morning digest."
+  },
+  {
+    "id": "call-scoring",
+    "name": "AI Call Scoring",
+    "price": "$59",
+    "pricePerMonth": 59,
+    "unit": "/ month",
+    "desc": "Quality, intent and conversion scores on every call."
+  },
+  {
+    "id": "video-intelligence",
+    "name": "Video Intelligence",
+    "price": "Soon",
+    "pricePerMonth": 0,
+    "unit": "Coming soon",
+    "desc": "Real-time analytics for retail, hospitality and security.",
+    "comingSoon": true
+  }
+]

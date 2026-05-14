@@ -1,0 +1,11 @@
+{
+  "lowPerCall": 140,
+  "highPerCall": 600,
+  "defaultMissed": 30,
+  "minMissed": 5,
+  "maxMissed": 120,
+  "captureRate": "~84%",
+  "liveIn": "10 minutes",
+  "subtitle": "Voxgard recovers most of them — automatically.",
+  "footnote": "Estimate based on typical service-business per-call value. Your numbers may vary."
+}

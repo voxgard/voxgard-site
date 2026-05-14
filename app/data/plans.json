@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Starter",
+    "price": "$299",
+    "per": "/ month",
+    "desc": "For solo offices and home-service teams just starting with AI.",
+    "features": [
+      "1 AI receptionist (English)",
+      "Up to 500 minutes / mo",
+      "Appointment booking",
+      "Email + calendar sync",
+      "Email support"
+    ],
+    "highlight": false,
+    "cta": "Start free trial",
+    "ctaHref": "/register"
+  },
+  {
+    "name": "Growth",
+    "price": "$799",
+    "per": "/ month",
+    "desc": "For multi-location practices and growing service teams.",
+    "features": [
+      "Up to 3 AI agents · EN + ES",
+      "2,500 minutes / mo",
+      "HIPAA-aligned + SOC 2 controls",
+      "Native CRM sync (HubSpot, Salesforce, GHL)",
+      "Live call monitoring",
+      "Priority support"
+    ],
+    "highlight": true,
+    "cta": "Start free trial",
+    "ctaHref": "/register"
+  },
+  {
+    "name": "Scale",
+    "price": "Custom",
+    "per": "",
+    "desc": "For franchises, MSOs and enterprise call centers.",
+    "features": [
+      "Unlimited agents & languages",
+      "Custom voice cloning",
+      "Dedicated cloud infrastructure",
+      "24/7 SLA + dedicated CSM",
+      "SSO + audit logs"
+    ],
+    "highlight": false,
+    "cta": "Talk to sales",
+    "ctaHref": "#contact"
+  }
+]

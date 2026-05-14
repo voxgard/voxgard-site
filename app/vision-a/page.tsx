@@ -1,63 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
-import MeshBackground from "../components/MeshBackground";
-import GlassCard from "../components/GlassCard";
-import StatCard from "../components/StatCard";
-import CallLogCard from "../components/CallLogCard";
-import CrmCard from "../components/CrmCard";
-import Sparkline from "../components/Sparkline";
+import DepthLayer from "../components/visuals/DepthLayer";
+import FloatingPanel from "../components/visuals/FloatingPanel";
 import StatusBadge from "../components/StatusBadge";
 import VoiceOrb from "../components/VoiceOrb";
-import {
-  overviewStats,
-  recentCalls,
-  contacts,
-  analyticsSeries,
-} from "../lib/mock";
+import { industries as INDUSTRIES } from "../data/industries";
+import { copy } from "../data/copy";
+import VoiceDemoSection from "../sections/VoiceDemoSection";
+import RoiSection from "../sections/RoiSection";
+import PlansConfiguratorSection from "../sections/PlansConfiguratorSection";
 
 /* ============================================================
-   Atomic UI helpers (light, premium, Apple-like)
+   Atomic UI helpers
    ============================================================ */
-
-function TiltCard({
-  children,
-  className = "",
-  intensity = 5,
-}: {
-  children: ReactNode;
-  className?: string;
-  intensity?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={(e) => {
-        const el = ref.current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        el.style.transform = `perspective(1200px) rotateX(${(-y * intensity).toFixed(2)}deg) rotateY(${(x * intensity).toFixed(2)}deg)`;
-        el.style.setProperty("--gx", `${((x + 0.5) * 100).toFixed(1)}%`);
-        el.style.setProperty("--gy", `${((y + 0.5) * 100).toFixed(1)}%`);
-      }}
-      onMouseLeave={() => {
-        const el = ref.current;
-        if (!el) return;
-        el.style.transform =
-          "perspective(1200px) rotateX(0deg) rotateY(0deg)";
-      }}
-      className={`vox-glow-card vox-gradient-border vox-ease will-change-transform ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
 
 function GlowCTA({
   children,
@@ -119,7 +77,7 @@ function SectionLabel({
 }) {
   return (
     <div
-      className="inline-flex items-center gap-2 rounded-full border border-[var(--border-soft)] bg-white/70 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] backdrop-blur-xl"
+      className="inline-flex items-center gap-2 rounded-full border border-[var(--border-soft)] bg-white/80 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] backdrop-blur-xl"
       style={{ color }}
     >
       <span
@@ -131,12 +89,19 @@ function SectionLabel({
   );
 }
 
-
 /* ============================================================
    AI receptionist in action — animated pipeline
    ============================================================ */
 
 function CallFlowSection() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setActiveIdx((i) => (i + 1) % 4);
+    }, 2200);
+    return () => window.clearInterval(id);
+  }, []);
+
   const stages = [
     {
       n: "01",
@@ -200,23 +165,20 @@ function CallFlowSection() {
   return (
     <section
       id="flow"
-      className="relative z-10 mx-auto w-full max-w-7xl px-6 py-28 md:px-12"
+      className="relative z-10 mx-auto w-full max-w-7xl px-6 py-20 md:px-12"
     >
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.9, ease: [0.32, 0.72, 0, 1] }}
-        className="mb-16 flex flex-col items-center text-center"
+        className="mb-12 flex flex-col items-center text-center"
       >
-        <SectionLabel color="#1E3A8A">AI receptionist in action</SectionLabel>
-        <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-          One call.{" "}
-          <span className="vox-shimmer-text">Four moves.</span>
+        <SectionLabel color="#1E3A8A">{copy.flow.eyebrow}</SectionLabel>
+        <h2 className="mt-6 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-6xl">
+          {copy.flow.headline}{" "}
+          <span className="vox-shimmer-text">{copy.flow.headlineAccent}</span>
         </h2>
-        <p className="mt-6 max-w-xl text-lg text-[var(--muted)]">
-          Watch a live call become a booking and a CRM record — in seconds.
-        </p>
       </motion.div>
 
       <div className="relative">
@@ -224,7 +186,6 @@ function CallFlowSection() {
         <div className="pointer-events-none absolute left-0 right-0 top-1/2 hidden -translate-y-1/2 lg:block">
           <div className="relative mx-auto h-px max-w-[88%]">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--brand-violet)]/40 to-transparent" />
-            {/* Traveling pulse */}
             <motion.div
               className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full"
               style={{
@@ -232,171 +193,227 @@ function CallFlowSection() {
                 boxShadow: "0 0 18px #9B8FE0",
               }}
               animate={{ left: ["0%", "100%"] }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-4">
-          {stages.map((s, i) => (
-            <motion.div
-              key={s.n}
-              initial={{ opacity: 0, y: 24, scale: 0.96 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{
-                duration: 0.8,
-                delay: i * 0.18,
-                ease: [0.32, 0.72, 0, 1],
-              }}
-              whileHover={{ y: -6 }}
-              className="relative"
-            >
-              <div className="vox-glass-strong vox-glow-card relative overflow-hidden rounded-3xl p-6 shadow-[var(--shadow-glass)]">
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-50"
-                  style={{
-                    background: `radial-gradient(circle at top, ${s.accent}1F, transparent 65%)`,
+          {stages.map((s, i) => {
+            const isActive = i === activeIdx;
+            const zMap = [20, 80, 50, 20] as const;
+            return (
+              <DepthLayer
+                key={s.n}
+                z={zMap[i]}
+                cursor
+                intensity={0.7}
+                className="relative"
+                innerClassName="rounded-3xl"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{
+                    duration: 0.8,
+                    delay: i * 0.18,
+                    ease: [0.32, 0.72, 0, 1],
                   }}
-                />
-                <div className="relative">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs tracking-[0.3em] text-[var(--subtle)]">
-                      {s.n}
-                    </span>
-                    <StatusBadge label={s.tag} tone={s.tone} />
-                  </div>
-
-                  <div className="mt-6 flex items-center gap-3">
-                    <motion.div
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-[0_8px_22px_-8px_rgba(31,60,122,0.45)]"
+                  whileHover={{ y: -6 }}
+                  animate={{
+                    y: isActive ? -6 : 0,
+                    scale: isActive ? 1.025 : 1,
+                  }}
+                  style={{
+                    transition:
+                      "transform 0.7s cubic-bezier(0.32, 0.72, 0, 1)",
+                  }}
+                >
+                  <div
+                    className="vox-glass-strong vox-glow-card relative overflow-hidden rounded-3xl p-6"
+                    style={{
+                      boxShadow: isActive
+                        ? `0 30px 80px -20px ${s.accent}66, 0 12px 24px -10px ${s.accent}40`
+                        : "0 8px 30px -6px rgba(31,60,122,0.10), 0 2px 6px rgba(31,60,122,0.04)",
+                      transition: "box-shadow 0.7s cubic-bezier(0.32, 0.72, 0, 1)",
+                    }}
+                  >
+                    <div
+                      className="pointer-events-none absolute inset-0 opacity-50"
                       style={{
-                        background: `linear-gradient(135deg, ${s.accent}, ${s.accent}cc)`,
+                        background: `radial-gradient(circle at top, ${s.accent}1F, transparent 65%)`,
                       }}
-                      animate={{
-                        scale: [1, 1.06, 1],
-                      }}
-                      transition={{
-                        duration: 2.6,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: i * 0.4,
-                      }}
-                    >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.7"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        {s.icon}
-                      </svg>
-                    </motion.div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--subtle)]">
-                        {s.label}
+                    />
+                    <div className="relative">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-xs tracking-[0.3em] text-[var(--muted)]">
+                          {s.n}
+                        </span>
+                        <StatusBadge label={s.tag} tone={s.tone} />
                       </div>
-                      <div className="mt-0.5 text-base font-semibold text-[var(--ink)]">
-                        {s.title}
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="mt-5 rounded-xl border border-[var(--border-soft)] bg-white/55 p-3 text-xs text-[var(--text)]">
-                    {s.sub}
-                  </div>
-
-                  {/* Mini animated detail per stage */}
-                  {i === 1 && (
-                    <div className="mt-3 flex h-7 items-end gap-0.5">
-                      {Array.from({ length: 22 }).map((_, j) => (
-                        <motion.span
-                          key={j}
-                          className="w-1 rounded-full"
+                      <div className="mt-6 flex items-center gap-3">
+                        <motion.div
+                          className="flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-[0_8px_22px_-8px_rgba(31,60,122,0.45)]"
                           style={{
-                            background:
-                              "linear-gradient(180deg, #9B8FE0, #6FA8E8)",
+                            background: `linear-gradient(135deg, ${s.accent}, ${s.accent}cc)`,
                           }}
-                          animate={{
-                            height: [`${20 + (j % 4) * 12}%`, `${50 + (j % 5) * 16}%`, `${20 + (j % 4) * 12}%`],
-                            opacity: [0.5, 0.95, 0.5],
-                          }}
+                          animate={{ scale: [1, 1.06, 1] }}
                           transition={{
-                            duration: 1.6 + (j % 4) * 0.3,
+                            duration: 2.6,
                             repeat: Infinity,
                             ease: "easeInOut",
-                            delay: j * 0.05,
+                            delay: i * 0.4,
                           }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  {i === 2 && (
-                    <div className="mt-3 grid grid-cols-7 gap-1 text-center text-[9px]">
-                      {["S", "M", "T", "W", "T", "F", "S"].map((d, k) => (
-                        <span
-                          key={k}
-                          className={`rounded-md py-1 ${
-                            k === 2
-                              ? "bg-[var(--brand-cyan)]/30 text-[var(--ink)] font-semibold"
-                              : "text-[var(--subtle)]"
-                          }`}
                         >
-                          {d}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {i === 3 && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {["contact", "deal", "task", "note"].map((t) => (
-                        <motion.span
-                          key={t}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.6 + Math.random() * 0.4 }}
-                          className="rounded-full border border-[var(--border-soft)] bg-white/65 px-2 py-0.5 text-[10px] text-[var(--text)]"
-                        >
-                          {t}
-                        </motion.span>
-                      ))}
-                    </div>
-                  )}
-                  {i === 0 && (
-                    <div className="mt-3 flex items-center gap-2">
-                      <motion.span
-                        className="h-2 w-2 rounded-full bg-emerald-500"
-                        animate={{ opacity: [0.3, 1, 0.3] }}
-                        transition={{
-                          duration: 1.2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      />
-                      <span className="text-[11px] text-[var(--muted)]">
-                        Connected · 4G · 0.18s
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.7"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            {s.icon}
+                          </svg>
+                        </motion.div>
+                        <div>
+                          <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--muted)]">
+                            {s.label}
+                          </div>
+                          <div className="mt-0.5 text-base font-semibold text-[var(--ink)]">
+                            {s.title}
+                          </div>
+                        </div>
+                      </div>
 
-              {/* Mobile connector */}
-              {i < stages.length - 1 && (
-                <div className="my-3 flex justify-center lg:hidden">
-                  <span className="text-[var(--subtle)]">↓</span>
-                </div>
-              )}
-            </motion.div>
+                      <div className="mt-5 rounded-xl border border-[var(--border-soft)] bg-white/70 p-3 text-xs text-[var(--text)]">
+                        {s.sub}
+                      </div>
+
+                      {i === 1 && (
+                        <div className="mt-3 flex h-7 items-end gap-0.5">
+                          {Array.from({ length: 22 }).map((_, j) => (
+                            <motion.span
+                              key={j}
+                              className="w-1 rounded-full"
+                              style={{
+                                background:
+                                  "linear-gradient(180deg, #9B8FE0, #6FA8E8)",
+                              }}
+                              animate={{
+                                height: [
+                                  `${20 + (j % 4) * 12}%`,
+                                  `${50 + (j % 5) * 16}%`,
+                                  `${20 + (j % 4) * 12}%`,
+                                ],
+                                opacity: [0.5, 0.95, 0.5],
+                              }}
+                              transition={{
+                                duration: 1.6 + (j % 4) * 0.3,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                                delay: j * 0.05,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      {i === 2 && (
+                        <div className="mt-3 grid grid-cols-7 gap-1 text-center text-[9px]">
+                          {["S", "M", "T", "W", "T", "F", "S"].map((d, k) => (
+                            <span
+                              key={k}
+                              className={`rounded-md py-1 ${
+                                k === 2
+                                  ? "bg-[var(--brand-cyan)]/30 text-[var(--ink)] font-semibold"
+                                  : "text-[var(--muted)]"
+                              }`}
+                            >
+                              {d}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {i === 3 && (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {["contact", "deal", "task", "note"].map((t) => (
+                            <motion.span
+                              key={t}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: 0.6 + Math.random() * 0.4 }}
+                              className="rounded-full border border-[var(--border-soft)] bg-white/80 px-2 py-0.5 text-[10px] text-[var(--text)]"
+                            >
+                              {t}
+                            </motion.span>
+                          ))}
+                        </div>
+                      )}
+                      {i === 0 && (
+                        <div className="mt-3 flex items-center gap-2">
+                          <motion.span
+                            className="h-2 w-2 rounded-full bg-emerald-500"
+                            animate={{ opacity: [0.3, 1, 0.3] }}
+                            transition={{
+                              duration: 1.2,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                          />
+                          <span className="text-[11px] text-[var(--muted)]">
+                            Connected · 4G · 0.18s
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {i < stages.length - 1 && (
+                    <div className="my-3 flex justify-center lg:hidden">
+                      <span className="text-[var(--muted)]">↓</span>
+                    </div>
+                  )}
+                </motion.div>
+              </DepthLayer>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   Industries — compact chip strip
+   ============================================================ */
+
+function IndustriesStrip() {
+  return (
+    <section className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-12 md:px-12">
+      <div className="flex flex-col items-center gap-5">
+        <div className="text-[10px] uppercase tracking-[0.4em] text-[var(--muted)]">
+          Tuned for your industry
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
+          {INDUSTRIES.map((ind) => (
+            <span
+              key={ind.name}
+              className="vox-glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[12px] text-[var(--ink-2)]"
+            >
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  background: ind.accent,
+                  boxShadow: `0 0 8px ${ind.accent}aa`,
+                }}
+              />
+              {ind.name}
+            </span>
           ))}
         </div>
       </div>
@@ -443,39 +460,16 @@ function MobileMenu() {
       {open && (
         <div className="vox-glass-strong absolute left-4 right-4 top-20 z-30 rounded-2xl p-5">
           <nav className="grid gap-3 text-sm">
-            <a
-              href="#preview"
-              onClick={() => setOpen(false)}
-              className="text-[var(--text)]"
-            >
-              Platform
-            </a>
-            <a
-              href="#industries"
-              onClick={() => setOpen(false)}
-              className="text-[var(--text)]"
-            >
-              Industries
-            </a>
-            <a
-              href="#features"
-              onClick={() => setOpen(false)}
-              className="text-[var(--text)]"
-            >
-              Features
-            </a>
-            <a
-              href="#pricing"
-              onClick={() => setOpen(false)}
-              className="text-[var(--text)]"
-            >
+            <a href="#pricing" onClick={() => setOpen(false)} className="text-[var(--text)]">
               Pricing
             </a>
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="text-[var(--text)]"
-            >
+            <a href="#flow" onClick={() => setOpen(false)} className="text-[var(--text)]">
+              How it works
+            </a>
+            <a href="#voice" onClick={() => setOpen(false)} className="text-[var(--text)]">
+              Voice demo
+            </a>
+            <Link href="/login" onClick={() => setOpen(false)} className="text-[var(--text)]">
               Sign in
             </Link>
             <Link
@@ -493,214 +487,12 @@ function MobileMenu() {
 }
 
 /* ============================================================
-   Static data
-   ============================================================ */
-
-const INDUSTRIES = [
-  {
-    name: "Dental",
-    accent: "#7CC9DC",
-    blurb:
-      "After-hours new-patient calls, insurance triage, recall booking and emergency routing.",
-    points: ["New patient intake", "Insurance verification", "Recall reminders"],
-  },
-  {
-    name: "Med Spa",
-    accent: "#9B8FE0",
-    blurb:
-      "Consult booking, treatment FAQs, no-show recovery and aftercare follow-ups.",
-    points: ["Consult booking", "Treatment FAQs", "No-show recovery"],
-  },
-  {
-    name: "HVAC",
-    accent: "#6FA8E8",
-    blurb:
-      "Emergency dispatch, quote requests and appointment confirmation 24/7.",
-    points: ["Emergency dispatch", "Quote requests", "Service confirms"],
-  },
-  {
-    name: "Home Services",
-    accent: "#B5A0E5",
-    blurb:
-      "Plumbing, electrical, roofing — qualify and route every lead in seconds.",
-    points: ["Lead qualification", "Job dispatch", "ServiceTitan sync"],
-  },
-  {
-    name: "Legal",
-    accent: "#1E3A8A",
-    blurb:
-      "Intake screening, conflict checks and consultation booking with full transcripts.",
-    points: ["Intake screening", "Conflict checks", "Consult booking"],
-  },
-  {
-    name: "Real Estate",
-    accent: "#A8E0EA",
-    blurb:
-      "Buyer/seller intake, listing inquiries and instant showing scheduling.",
-    points: ["Listing inquiries", "Buyer intake", "Showing schedule"],
-  },
-];
-
-const FEATURES = [
-  {
-    t: "24/7 answering",
-    d: "Never miss after-hours, lunch-break or peak-hour calls again.",
-    c: "#6FA8E8",
-    icon: <path d="M12 6v6l4 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
-  },
-  {
-    t: "Books appointments live",
-    d: "Native sync with Google Calendar, Calendly, Acuity, Jobber and ServiceTitan.",
-    c: "#9B8FE0",
-    icon: (
-      <>
-        <rect x="3" y="4" width="18" height="18" rx="2" />
-        <path d="M16 2v4M8 2v4M3 10h18" />
-      </>
-    ),
-  },
-  {
-    t: "CRM sync",
-    d: "Push contacts, calls and summaries to HubSpot, Salesforce, GHL and more.",
-    c: "#7CC9DC",
-    icon: (
-      <>
-        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        <path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />
-      </>
-    ),
-  },
-  {
-    t: "HIPAA-aligned",
-    d: "Encryption, redaction and a signed BAA — built for healthcare and legal.",
-    c: "#1E3A8A",
-    icon: <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z" />,
-  },
-  {
-    t: "Sub-300ms voice",
-    d: "Latency low enough to feel human. Natural turn-taking and barge-in.",
-    c: "#B5A0E5",
-    icon: <path d="M3 12h3l3-9 4 18 3-9h5" />,
-  },
-  {
-    t: "Multilingual",
-    d: "30+ languages including native English, Spanish, French and Mandarin.",
-    c: "#9B8FE0",
-    icon: (
-      <>
-        <path d="M3 5h12M9 3v2M11 5c-2 7-5 9-5 9M5 9c0 4 4 7 8 7M14 21l5-12 5 12M16 17h6" />
-      </>
-    ),
-  },
-  {
-    t: "Custom voice & script",
-    d: "Match your brand tone. Upload FAQs, scripts and knowledge base.",
-    c: "#6FA8E8",
-    icon: (
-      <>
-        <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
-        <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3" />
-      </>
-    ),
-  },
-  {
-    t: "Real-time analytics",
-    d: "Every call recorded, transcribed, summarized and searchable.",
-    c: "#7CC9DC",
-    icon: <path d="M3 3v18h18M7 14l4-4 4 4 5-7" />,
-  },
-];
-
-const STEPS = [
-  {
-    n: "01",
-    t: "Connect your number",
-    d: "Forward your business line in minutes — keep your existing carrier.",
-  },
-  {
-    n: "02",
-    t: "Train your agent",
-    d: "Upload FAQs, scripts and connect your calendar & CRM.",
-  },
-  {
-    n: "03",
-    t: "Go live",
-    d: "Voxgard answers every call 24/7 in English & Spanish.",
-  },
-  {
-    n: "04",
-    t: "Track & scale",
-    d: "Dashboard, transcripts and CRM-synced summaries on every call.",
-  },
-];
-
-const PRICING = [
-  {
-    name: "Starter",
-    price: "$299",
-    per: "/ month",
-    desc: "For solo offices and home-service teams just starting with AI.",
-    features: [
-      "1 AI receptionist (English)",
-      "Up to 500 minutes / mo",
-      "Appointment booking",
-      "Email + calendar sync",
-      "Email support",
-    ],
-    highlight: false,
-    cta: "Start free trial",
-  },
-  {
-    name: "Growth",
-    price: "$799",
-    per: "/ month",
-    desc: "For multi-location practices and growing service teams.",
-    features: [
-      "Up to 3 AI agents · EN + ES",
-      "2,500 minutes / mo",
-      "HIPAA-aligned + SOC 2 controls",
-      "Native CRM sync (HubSpot, Salesforce, GHL)",
-      "Live call monitoring",
-      "Priority support",
-    ],
-    highlight: true,
-    cta: "Start free trial",
-  },
-  {
-    name: "Scale",
-    price: "Custom",
-    per: "",
-    desc: "For franchises, MSOs and enterprise call centers.",
-    features: [
-      "Unlimited agents & languages",
-      "Custom voice cloning",
-      "Dedicated cloud infrastructure",
-      "24/7 SLA + dedicated CSM",
-      "SSO + audit logs",
-    ],
-    highlight: false,
-    cta: "Talk to sales",
-  },
-];
-
-const TRUST_LOGOS = [
-  "NORTHSTAR",
-  "BRIGHTLINE",
-  "HELIX",
-  "STRATUS",
-  "MERIDIAN",
-  "ATLAS",
-];
-
-/* ============================================================
    Page
    ============================================================ */
 
 export default function Home() {
   return (
     <main className="relative min-h-screen text-[var(--ink)]">
-      <MeshBackground />
-
       {/* HEADER */}
       <header className="relative z-20 mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-12">
         <Link
@@ -714,38 +506,20 @@ export default function Home() {
               boxShadow: "0 0 18px rgba(155,143,224,0.55)",
             }}
           />
-          VOXGARD
+          {copy.brand}
         </Link>
 
-        <nav className="hidden items-center gap-9 text-sm text-[var(--muted)] md:flex">
-          <a
-            href="#preview"
-            className="vox-ease transition hover:text-[var(--ink)]"
-          >
-            Platform
-          </a>
-          <a
-            href="#industries"
-            className="vox-ease transition hover:text-[var(--ink)]"
-          >
-            Industries
-          </a>
-          <a
-            href="#features"
-            className="vox-ease transition hover:text-[var(--ink)]"
-          >
-            Features
-          </a>
-          <a
-            href="#pricing"
-            className="vox-ease transition hover:text-[var(--ink)]"
-          >
+        <nav className="hidden items-center gap-9 text-sm text-[var(--text)] md:flex">
+          <a href="#pricing" className="vox-ease transition hover:text-[var(--ink)]">
             Pricing
           </a>
-          <Link
-            href="/dashboard"
-            className="vox-ease transition hover:text-[var(--ink)]"
-          >
+          <a href="#flow" className="vox-ease transition hover:text-[var(--ink)]">
+            How it works
+          </a>
+          <a href="#voice" className="vox-ease transition hover:text-[var(--ink)]">
+            Voice
+          </a>
+          <Link href="/dashboard" className="vox-ease transition hover:text-[var(--ink)]">
             Dashboard
           </Link>
         </nav>
@@ -768,680 +542,165 @@ export default function Home() {
         <MobileMenu />
       </header>
 
-      {/* HERO — minimal copy, big reactive orb */}
-      <section className="relative z-10 mx-auto flex min-h-[88vh] w-full max-w-7xl flex-col items-center justify-center px-6 pt-8 pb-24 md:px-12">
+      {/* HERO — minimal, big reactive orb */}
+      <section className="relative z-10 mx-auto flex min-h-[82vh] w-full max-w-7xl flex-col items-center justify-center px-6 pt-6 pb-16 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.32, 0.72, 0, 1] }}
           className="relative flex flex-col items-center text-center"
         >
-          <SectionLabel color="#1E3A8A">AI call operations</SectionLabel>
+          <SectionLabel color="#1E3A8A">{copy.hero.eyebrow}</SectionLabel>
 
-          <h1 className="mt-10 text-6xl font-semibold leading-[0.98] tracking-[-0.03em] text-[var(--ink)] md:text-[7.5rem] lg:text-[9rem]">
-            Never miss
+          <h1 className="mt-8 text-6xl font-semibold leading-[0.98] tracking-[-0.03em] text-[var(--ink)] md:text-[7.5rem] lg:text-[8.5rem]">
+            {copy.hero.headline}
             <br />
-            <span className="vox-shimmer-text">a call.</span>
+            <span className="vox-shimmer-text">{copy.hero.headlineAccent}</span>
           </h1>
 
-          <p className="mt-10 max-w-xl text-lg leading-relaxed text-[var(--muted)] md:text-xl">
-            Your AI receptionist — answering, booking, syncing.
-            <br className="hidden sm:block" />
-            Built for service businesses.
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-[var(--text)] md:text-xl">
+            {copy.hero.sub}
           </p>
 
-          {/* Big reactive orb */}
+          {/* Big reactive orb with floating depth-layered indicators */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.4, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
-            className="my-14 flex w-full justify-center"
+            className="relative my-12 flex w-full justify-center"
           >
+            {/* top-left — mid depth */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.9, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute left-[6%] top-[8%] z-10 hidden md:block"
+            >
+              <DepthLayer z={70} float cursor intensity={1.1}>
+                <FloatingPanel className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full">
+                  <span
+                    className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                    style={{
+                      boxShadow: "0 0 10px rgba(16,185,129,0.7)",
+                      animation: "vox-pulse 1.6s ease-in-out infinite",
+                    }}
+                  />
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink-2)]">
+                    Live · 04 calls
+                  </span>
+                </FloatingPanel>
+              </DepthLayer>
+            </motion.div>
+
+            {/* left-middle — Aurora listening, deeper */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 1.0, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute left-[2%] top-[44%] z-10 hidden lg:block"
+            >
+              <DepthLayer z={45} float cursor intensity={0.9}>
+                <FloatingPanel
+                  tone="accent"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-2xl"
+                >
+                  <div
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-[10px] font-bold text-white"
+                    style={{
+                      background: "linear-gradient(135deg, #9B8FE0, #6FA8E8)",
+                      boxShadow: "0 6px 14px -4px rgba(155,143,224,0.55)",
+                    }}
+                  >
+                    A
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[9px] uppercase tracking-[0.25em] text-[var(--muted)]">
+                      Aurora · listening
+                    </span>
+                    <div className="mt-1 flex h-3 items-end gap-[2px]">
+                      {Array.from({ length: 14 }).map((_, j) => (
+                        <motion.span
+                          key={j}
+                          className="w-[2px] rounded-full"
+                          style={{
+                            background:
+                              "linear-gradient(180deg, #9B8FE0, #6FA8E8)",
+                          }}
+                          animate={{
+                            height: [
+                              `${30 + (j % 4) * 14}%`,
+                              `${60 + (j % 5) * 12}%`,
+                              `${30 + (j % 4) * 14}%`,
+                            ],
+                            opacity: [0.5, 0.95, 0.5],
+                          }}
+                          transition={{
+                            duration: 1.4 + (j % 3) * 0.25,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: j * 0.06,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </FloatingPanel>
+              </DepthLayer>
+            </motion.div>
+
+            {/* bottom-right — closest, booked */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 1.1, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute bottom-[10%] right-[4%] z-10 hidden md:block"
+            >
+              <DepthLayer z={95} float cursor intensity={1.2}>
+                <FloatingPanel
+                  tone="deep"
+                  className="flex max-w-[220px] flex-col px-4 py-3 rounded-2xl"
+                >
+                  <span className="text-[9px] uppercase tracking-[0.3em] text-[var(--muted)]">
+                    Booked just now
+                  </span>
+                  <span className="mt-1 text-sm font-semibold text-[var(--ink)]">
+                    Tue · 2:00 PM
+                  </span>
+                  <span className="text-[11px] text-[var(--text)]">
+                    Synced to HubSpot
+                  </span>
+                </FloatingPanel>
+              </DepthLayer>
+            </motion.div>
+
             <VoiceOrb size={520} />
           </motion.div>
 
           <div className="flex flex-col gap-4 sm:flex-row">
-            <GlowCTA href="/register">Start free trial</GlowCTA>
-            <GhostCTA href="#flow">See it in action</GhostCTA>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-[var(--muted)]">
-            <span className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
-              No credit card
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
-              Live in 10 minutes
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
-              HIPAA-aligned
-            </span>
+            <GlowCTA href={copy.hero.primaryCta.href}>
+              {copy.hero.primaryCta.label}
+            </GlowCTA>
+            <GhostCTA href={copy.hero.secondaryCta.href}>
+              {copy.hero.secondaryCta.label}
+            </GhostCTA>
           </div>
         </motion.div>
       </section>
 
-      {/* TRUST BAR */}
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-12 md:px-12">
-        <div className="vox-glass rounded-2xl px-6 py-5">
-          <div className="text-center text-[10px] uppercase tracking-[0.3em] text-[var(--subtle)]">
-            Trusted by service teams across the US
-          </div>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
-            {TRUST_LOGOS.map((l) => (
-              <span
-                key={l}
-                className="text-sm font-bold tracking-[0.3em] text-[var(--whisper)]"
-              >
-                {l}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* PRICING — moved up, right after Hero */}
+      <PlansConfiguratorSection />
 
       {/* AI IN ACTION — animated pipeline */}
       <CallFlowSection />
 
-      {/* LIVE DASHBOARD PREVIEW */}
-      <section
-        id="preview"
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12"
-      >
-        <motion.div initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:0.8,ease:[0.32,0.72,0,1]}} className="mb-12 flex flex-col items-center text-center">
-          <SectionLabel color="#1E3A8A">Live dashboard</SectionLabel>
-          <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-            Every call.{" "}
-            <span className="vox-shimmer-text">Visible.</span>
-          </h2>
-          <p className="mt-5 max-w-md text-lg text-[var(--muted)]">
-            Live transcripts. Instant summaries. Real-time CRM.
-          </p>
-        </motion.div>
+      {/* INDUSTRIES — compact chip strip */}
+      <IndustriesStrip />
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {overviewStats.map((s) => (
-            <StatCard key={s.label} stat={s} />
-          ))}
-        </div>
+      {/* ROI calculator */}
+      <RoiSection />
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-3">
-          <GlassCard className="p-6 lg:col-span-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs uppercase tracking-[0.25em] text-[var(--muted)]">
-                  Calls · 30 days
-                </div>
-                <div className="mt-2 text-3xl font-bold text-[var(--ink)]">
-                  <span className="vox-shimmer-text">28,140</span>
-                </div>
-              </div>
-              <div className="flex gap-2 text-xs">
-                {["7d", "30d", "90d"].map((p, i) => (
-                  <span
-                    key={p}
-                    className={`rounded-full border px-3 py-1.5 ${
-                      i === 1
-                        ? "border-[var(--border)] bg-white/85 text-[var(--ink)]"
-                        : "border-[var(--border-soft)] bg-white/55 text-[var(--muted)]"
-                    }`}
-                  >
-                    {p}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="mt-6 overflow-hidden">
-              <Sparkline
-                data={analyticsSeries.calls}
-                color="#9B8FE0"
-                width={760}
-                height={180}
-              />
-            </div>
-          </GlassCard>
-
-          <GlassCard className="p-6">
-            <div className="text-xs uppercase tracking-[0.25em] text-[var(--muted)]">
-              Live activity
-            </div>
-            <ul className="mt-5 space-y-4">
-              {[
-                {
-                  t: "Aurora booked appointment · Daniel Hayes",
-                  c: "#6FA8E8",
-                  time: "2m",
-                },
-                {
-                  t: "Lyra escalated to human · Stratus Health",
-                  c: "#9B8FE0",
-                  time: "8m",
-                },
-                {
-                  t: "New lead synced to HubSpot · Helix",
-                  c: "#7CC9DC",
-                  time: "12m",
-                },
-                {
-                  t: "Vega closed renewal · $48k",
-                  c: "#1E3A8A",
-                  time: "1h",
-                },
-                {
-                  t: "Nova confirmed appointment · Akira T.",
-                  c: "#B5A0E5",
-                  time: "2h",
-                },
-              ].map((a, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm">
-                  <span
-                    className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
-                    style={{
-                      background: a.c,
-                      boxShadow: `0 0 10px ${a.c}88`,
-                    }}
-                  />
-                  <div className="flex-1">
-                    <div className="text-[var(--text)]">{a.t}</div>
-                    <div className="text-xs text-[var(--subtle)]">
-                      {a.time} ago
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </GlassCard>
-        </div>
-      </section>
-
-      {/* CALL LOGS PREVIEW */}
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12">
-        <div className="mb-12 grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-end">
-          <div>
-            <SectionLabel color="#9B8FE0">Call logs</SectionLabel>
-            <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-6xl">
-              Searchable.
-              <br />
-              <span className="vox-shimmer-text">Replayable.</span>
-            </h2>
-          </div>
-          <div className="hidden text-base text-[var(--muted)] lg:block">
-            Sentiment, intent, language — captured on every call.
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {recentCalls.slice(0, 4).map((c) => (
-            <CallLogCard key={c.id} call={c} />
-          ))}
-        </div>
-      </section>
-
-      {/* AI SUMMARIES PREVIEW */}
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12">
-        <motion.div initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:0.8,ease:[0.32,0.72,0,1]}} className="mb-12 flex flex-col items-center text-center">
-          <SectionLabel color="#1E3A8A">AI summaries</SectionLabel>
-          <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-            Structured.{" "}
-            <span className="vox-shimmer-text">Auto-pushed.</span>
-          </h2>
-          <p className="mt-5 max-w-md text-lg text-[var(--muted)]">
-            Intent, entities, next actions — extracted on every call.
-          </p>
-        </motion.div>
-
-        <div className="grid gap-5 lg:grid-cols-3">
-          <TiltCard className="vox-glass relative overflow-hidden rounded-3xl p-7 lg:col-span-2">
-            <div
-              className="absolute inset-0 rounded-3xl opacity-40"
-              style={{
-                background:
-                  "radial-gradient(circle at top right, rgba(155,143,224,0.18), transparent 60%)",
-              }}
-            />
-            <div className="relative">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl text-white ring-1 ring-white/40"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #9B8FE0, #6FA8E8)",
-                      boxShadow:
-                        "0 4px 12px -3px rgba(155,143,224,0.45)",
-                    }}
-                  >
-                    <span className="text-sm font-bold">A</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-[var(--ink)]">
-                      Aurora · Inbound Sales
-                    </div>
-                    <div className="text-xs text-[var(--muted)]">
-                      Call C-49281 · 4:12 · English
-                    </div>
-                  </div>
-                </div>
-                <StatusBadge label="Booked" tone="success" />
-              </div>
-
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                {[
-                  {
-                    l: "Caller intent",
-                    v: "Pricing & availability for voice + CRM bundle",
-                  },
-                  { l: "Sentiment", v: "Positive · high intent" },
-                  {
-                    l: "Booked",
-                    v: "Discovery · Tue Mar 12 · 2:00 PM PT",
-                  },
-                  { l: "Next action", v: "Send proposal + calendar invite" },
-                ].map((row) => (
-                  <div key={row.l}>
-                    <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--subtle)]">
-                      {row.l}
-                    </div>
-                    <div className="mt-1 text-sm text-[var(--ink-2)]">
-                      {row.v}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 rounded-2xl border border-[var(--border-soft)] bg-white/60 p-4 text-sm leading-relaxed text-[var(--text)]">
-                <div className="mb-2 text-[10px] uppercase tracking-[0.25em] text-[var(--subtle)]">
-                  Transcript · highlight
-                </div>
-                <p>
-                  <span className="text-[var(--subtle)]">Caller:</span>{" "}
-                  &ldquo;We&apos;re losing 30% of after-hours calls — what&apos;s
-                  your fastest setup?&rdquo;
-                  <br />
-                  <span className="text-[var(--subtle)]">Aurora:</span>{" "}
-                  &ldquo;Most teams are live in under 10 minutes. I&apos;ll
-                  send your calendar invite for Tuesday at 2 — would that
-                  work?&rdquo;
-                </p>
-              </div>
-            </div>
-          </TiltCard>
-
-          <div className="grid gap-5">
-            <GlassCard className="p-6">
-              <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--subtle)]">
-                Auto-tagged
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {[
-                  "pricing",
-                  "after-hours",
-                  "demo-request",
-                  "high-intent",
-                  "english",
-                  "logistics",
-                ].map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-[var(--border-soft)] bg-white/65 px-2.5 py-1 text-[11px] text-[var(--text)]"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </GlassCard>
-
-            <GlassCard className="p-6">
-              <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--subtle)]">
-                Synced to
-              </div>
-              <ul className="mt-4 space-y-3 text-sm">
-                {[
-                  { name: "HubSpot · contact created", c: "#9B8FE0" },
-                  { name: "Google Calendar · event added", c: "#6FA8E8" },
-                  { name: "Slack #sales · alert posted", c: "#B5A0E5" },
-                  { name: "Email · follow-up sent", c: "#7CC9DC" },
-                ].map((i) => (
-                  <li key={i.name} className="flex items-center gap-3">
-                    <span
-                      className="h-2 w-2 rounded-full"
-                      style={{
-                        background: i.c,
-                        boxShadow: `0 0 10px ${i.c}88`,
-                      }}
-                    />
-                    <span className="text-[var(--text)]">{i.name}</span>
-                  </li>
-                ))}
-              </ul>
-            </GlassCard>
-          </div>
-        </div>
-      </section>
-
-      {/* CRM PREVIEW */}
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12">
-        <div className="mb-12 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
-          <div>
-            <SectionLabel color="#7CC9DC">Built-in CRM</SectionLabel>
-            <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-6xl">
-              Pipeline that{" "}
-              <span className="vox-shimmer-text">writes itself.</span>
-            </h2>
-          </div>
-          <div className="hidden flex-wrap justify-end gap-2 lg:flex">
-            {[
-              "HubSpot",
-              "Salesforce",
-              "GoHighLevel",
-              "Pipedrive",
-              "Jobber",
-              "ServiceTitan",
-            ].map((n) => (
-              <span
-                key={n}
-                className="rounded-full border border-[var(--border-soft)] bg-white/60 px-3 py-1.5 text-xs text-[var(--text)]"
-              >
-                {n}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {contacts.slice(0, 3).map((c) => (
-            <CrmCard key={c.id} contact={c} />
-          ))}
-        </div>
-      </section>
-
-      {/* INDUSTRIES */}
-      <section
-        id="industries"
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12"
-      >
-        <motion.div initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:0.8,ease:[0.32,0.72,0,1]}} className="mb-14 flex flex-col items-center text-center">
-          <SectionLabel color="#1E3A8A">Industries</SectionLabel>
-          <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-            Tuned for{" "}
-            <span className="vox-shimmer-text">your industry.</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {INDUSTRIES.map((ind) => (
-            <TiltCard
-              key={ind.name}
-              className="vox-glass relative overflow-hidden rounded-3xl p-7"
-            >
-              <div
-                className="absolute inset-0 rounded-3xl opacity-50"
-                style={{
-                  background: `radial-gradient(circle at top, ${ind.accent}24, transparent 60%)`,
-                }}
-              />
-              <div className="relative">
-                <div className="flex items-center gap-3">
-                  <span
-                    className="flex h-11 w-11 items-center justify-center rounded-xl text-white ring-1 ring-white/40"
-                    style={{
-                      background: `linear-gradient(135deg, ${ind.accent}, ${ind.accent}cc)`,
-                      boxShadow: `0 6px 16px -6px ${ind.accent}aa`,
-                    }}
-                  >
-                    <span className="h-2 w-2 rounded-full bg-white" />
-                  </span>
-                  <h3 className="text-xl font-semibold text-[var(--ink)]">
-                    {ind.name}
-                  </h3>
-                </div>
-                <p className="mt-5 text-sm leading-relaxed text-[var(--text)]">
-                  {ind.blurb}
-                </p>
-                <ul className="mt-5 space-y-2 text-sm text-[var(--ink-2)]">
-                  {ind.points.map((p) => (
-                    <li key={p} className="flex items-center gap-3">
-                      <span
-                        className="h-1.5 w-1.5 rounded-full"
-                        style={{
-                          background: ind.accent,
-                          boxShadow: `0 0 6px ${ind.accent}88`,
-                        }}
-                      />
-                      {p}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </TiltCard>
-          ))}
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section
-        id="features"
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12"
-      >
-        <motion.div initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:0.8,ease:[0.32,0.72,0,1]}} className="mb-14 flex flex-col items-center text-center">
-          <SectionLabel color="#9B8FE0">Features</SectionLabel>
-          <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-            Everything you need.
-            <br />
-            <span className="vox-shimmer-text">Nothing you don&apos;t.</span>
-          </h2>
-        </motion.div>
-
-        <div className="vox-glass grid gap-px overflow-hidden rounded-3xl md:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map((f) => (
-            <div
-              key={f.t}
-              className="vox-ease group relative bg-white/35 p-7 transition hover:bg-white/65"
-            >
-              <div
-                className="flex h-11 w-11 items-center justify-center rounded-xl ring-1 ring-white/50 transition group-hover:ring-white/70"
-                style={{
-                  background: `linear-gradient(135deg, ${f.c}33, ${f.c}11)`,
-                }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke={f.c}
-                  strokeWidth="1.7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  {f.icon}
-                </svg>
-              </div>
-              <h3 className="mt-5 text-base font-semibold text-[var(--ink)]">
-                {f.t}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">
-                {f.d}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12">
-        <motion.div initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:0.8,ease:[0.32,0.72,0,1]}} className="mb-14 flex flex-col items-center text-center">
-          <SectionLabel color="#B5A0E5">How it works</SectionLabel>
-          <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-            Live in <span className="vox-shimmer-text">10 minutes.</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid gap-6 md:grid-cols-4">
-          {STEPS.map((s, i, arr) => (
-            <TiltCard
-              key={s.n}
-              className="vox-glass relative rounded-2xl p-6"
-            >
-              <div className="vox-shimmer-text font-mono text-3xl font-bold">
-                {s.n}
-              </div>
-              <h3 className="mt-3 text-lg font-semibold text-[var(--ink)]">
-                {s.t}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">
-                {s.d}
-              </p>
-              {i < arr.length - 1 && (
-                <div className="absolute right-[-12px] top-1/2 hidden h-px w-6 bg-gradient-to-r from-[var(--border-strong)] to-transparent md:block" />
-              )}
-            </TiltCard>
-          ))}
-        </div>
-      </section>
-
-      {/* PRICING */}
-      <section
-        id="pricing"
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 md:px-12"
-      >
-        <motion.div initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:0.8,ease:[0.32,0.72,0,1]}} className="mb-14 flex flex-col items-center text-center">
-          <SectionLabel color="#9B8FE0">Pricing</SectionLabel>
-          <h2 className="mt-8 text-5xl font-semibold tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-            Simple{" "}
-            <span className="vox-shimmer-text">pricing.</span>
-          </h2>
-          <p className="mt-5 text-lg text-[var(--muted)]">
-            Start free. Cancel anytime.
-          </p>
-        </motion.div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {PRICING.map((p) => (
-            <TiltCard
-              key={p.name}
-              className={`relative overflow-hidden rounded-3xl p-8 ${
-                p.highlight
-                  ? "vox-glass-strong border-transparent shadow-[var(--shadow-lift)]"
-                  : "vox-glass"
-              }`}
-            >
-              {p.highlight && (
-                <>
-                  <div
-                    className="absolute inset-0 rounded-3xl"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(111,168,232,0.16), rgba(155,143,224,0.16), rgba(124,201,220,0.12))",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 rounded-3xl"
-                    style={{
-                      padding: "1px",
-                      background:
-                        "linear-gradient(135deg, #6FA8E8, #9B8FE0, #7CC9DC)",
-                      WebkitMask:
-                        "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                    }}
-                  />
-                </>
-              )}
-              <div className="relative">
-                {p.highlight && (
-                  <div
-                    className="absolute -top-2 right-0 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, #6FA8E8, #9B8FE0, #7CC9DC)",
-                      boxShadow: "0 6px 18px -6px rgba(155,143,224,0.6)",
-                    }}
-                  >
-                    Most popular
-                  </div>
-                )}
-                <div className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
-                  {p.name}
-                </div>
-                <div className="mt-6 flex items-baseline gap-2">
-                  <span className="text-5xl font-bold tracking-tight text-[var(--ink)]">
-                    {p.price}
-                  </span>
-                  <span className="text-sm text-[var(--subtle)]">
-                    {p.per}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm text-[var(--text)]">{p.desc}</p>
-
-                <ul className="mt-6 space-y-3 text-sm">
-                  {p.features.map((f) => (
-                    <li
-                      key={f}
-                      className="flex items-center gap-3 text-[var(--text)]"
-                    >
-                      <span
-                        className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, rgba(111,168,232,0.85), rgba(155,143,224,0.85))",
-                          boxShadow:
-                            "0 2px 6px -2px rgba(155,143,224,0.5)",
-                        }}
-                      >
-                        <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                      </span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href={p.name === "Scale" ? "#contact" : "/register"}
-                  className={`vox-ease mt-8 block rounded-full px-6 py-3 text-center text-sm font-semibold transition ${
-                    p.highlight
-                      ? "vox-btn-soft"
-                      : "border border-[var(--border)] bg-white/70 text-[var(--ink-2)] hover:bg-white/90"
-                  }`}
-                >
-                  {p.cta}
-                </Link>
-              </div>
-            </TiltCard>
-          ))}
-        </div>
-
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-[var(--muted)]">
-          <span>SOC 2 controls</span>
-          <span>·</span>
-          <span>HIPAA-aligned</span>
-          <span>·</span>
-          <span>BAA available</span>
-          <span>·</span>
-          <span>US data residency</span>
-          <span>·</span>
-          <span>30+ languages</span>
-        </div>
-      </section>
-
-      {/* SUBTLE VIDEO HINT */}
-      <section className="relative z-10 mx-auto w-full max-w-5xl px-6 py-12 md:px-12">
-        <div className="vox-glass relative overflow-hidden rounded-2xl px-6 py-5 text-center">
-          <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--subtle)]">
-            Coming next
-          </div>
-          <div className="mt-2 text-sm text-[var(--text)]">
-            <span className="font-medium text-[var(--ink)]">
-              Video intelligence
-            </span>{" "}
-            — joining the platform soon, for retail, hospitality and security
-            teams. Calls remain our core focus.
-          </div>
-        </div>
-      </section>
+      {/* VOICE DEMO */}
+      <VoiceDemoSection />
 
       {/* FINAL CTA */}
       <section
@@ -1465,123 +724,51 @@ export default function Home() {
               animation: "vox-pulse-soft 11s ease-in-out infinite",
             }}
           />
-          <div
-            className="pointer-events-none absolute right-12 top-12 h-40 w-40 rounded-full blur-2xl"
-            style={{
-              background: "#A8E0EA",
-              opacity: 0.5,
-              animation: "vox-pulse-soft 7s ease-in-out infinite",
-            }}
-          />
 
           <div className="relative max-w-2xl">
-            <SectionLabel color="#1E3A8A">Ready when you are</SectionLabel>
+            <SectionLabel color="#1E3A8A">{copy.cta.eyebrow}</SectionLabel>
             <h2 className="mt-8 text-5xl font-semibold leading-[1] tracking-[-0.02em] text-[var(--ink)] md:text-7xl">
-              Start{" "}
-              <span className="vox-shimmer-text">booking jobs.</span>
+              {copy.cta.headline}
+              <br />
+              <span className="vox-shimmer-text">{copy.cta.headlineAccent}</span>
             </h2>
-            <p className="mt-5 max-w-md text-lg text-[var(--muted)]">
-              Live in 10 minutes. 14-day free trial.
+            <p className="mt-6 max-w-lg text-lg text-[var(--text)]">
+              {copy.cta.sub}
             </p>
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <GlowCTA href="/register">Start free trial</GlowCTA>
-              <GhostCTA href="/login">Talk to sales</GhostCTA>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <GlowCTA href={copy.cta.primaryCta.href}>
+                {copy.cta.primaryCta.label}
+              </GlowCTA>
+              <GhostCTA href={copy.cta.secondaryCta.href}>
+                {copy.cta.secondaryCta.label}
+              </GhostCTA>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="relative z-10 mx-auto w-full max-w-7xl border-t border-[var(--border-soft)] px-6 py-14 md:px-12">
-        <div className="grid gap-10 md:grid-cols-[1.2fr_repeat(4,1fr)]">
-          <div>
-            <div className="flex items-center gap-3 text-lg font-bold tracking-[0.28em] text-[var(--ink)]">
-              <span
-                className="inline-block h-3 w-3 rounded-sm"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #6FA8E8, #9B8FE0, #7CC9DC)",
-                  boxShadow: "0 0 18px rgba(155,143,224,0.55)",
-                }}
-              />
-              VOXGARD
-            </div>
-            <p className="mt-4 max-w-xs text-sm text-[var(--muted)]">
-              AI call operations for US service businesses. Never miss a
-              call. Book more jobs.
-            </p>
-            <div className="mt-5 flex items-center gap-2 text-xs">
-              <span
-                className="h-1.5 w-1.5 rounded-full bg-emerald-500"
-                style={{ boxShadow: "0 0 8px rgba(16,185,129,0.7)" }}
-              />
-              <span className="text-emerald-700">All systems operational</span>
-            </div>
+      {/* FOOTER — compact */}
+      <footer className="relative z-10 mx-auto w-full max-w-7xl border-t border-[var(--border-soft)] px-6 py-10 md:px-12">
+        <div className="flex flex-col items-center justify-between gap-4 text-xs text-[var(--text)] md:flex-row">
+          <div className="flex items-center gap-3">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-sm"
+              style={{
+                background:
+                  "linear-gradient(135deg, #6FA8E8, #9B8FE0, #7CC9DC)",
+                boxShadow: "0 0 12px rgba(155,143,224,0.55)",
+              }}
+            />
+            <span className="font-bold tracking-[0.28em] text-[var(--ink)]">
+              {copy.brand}
+            </span>
+            <span className="text-[var(--muted)]">© 2026</span>
           </div>
-
-          {[
-            {
-              h: "Product",
-              links: [
-                ["Platform", "#preview"],
-                ["Features", "#features"],
-                ["Pricing", "#pricing"],
-                ["Dashboard", "/dashboard"],
-              ],
-            },
-            {
-              h: "Industries",
-              links: [
-                ["Dental", "#industries"],
-                ["Med Spa", "#industries"],
-                ["HVAC", "#industries"],
-                ["Home Services", "#industries"],
-                ["Legal", "#industries"],
-                ["Real Estate", "#industries"],
-              ],
-            },
-            {
-              h: "Company",
-              links: [
-                ["About", "#"],
-                ["Customers", "#"],
-                ["Careers", "#"],
-                ["Contact", "#contact"],
-              ],
-            },
-            {
-              h: "Legal",
-              links: [
-                ["Privacy", "#"],
-                ["Terms", "#"],
-                ["Security", "#"],
-                ["HIPAA / BAA", "#"],
-              ],
-            },
-          ].map((col) => (
-            <div key={col.h}>
-              <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--subtle)]">
-                {col.h}
-              </div>
-              <ul className="mt-4 space-y-2 text-sm">
-                {col.links.map(([label, href]) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      className="vox-ease text-[var(--muted)] transition hover:text-[var(--ink)]"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-[var(--border-soft)] pt-6 text-xs text-[var(--muted)] md:flex-row">
-          <div>© 2026 Voxgard, Inc. All rights reserved.</div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[var(--muted)]">
+            <span className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
+              All systems operational
+            </span>
             <span>SOC 2 · HIPAA-aligned · US-hosted</span>
           </div>
         </div>

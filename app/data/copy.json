@@ -1,0 +1,67 @@
+{
+  "brand": "VOXGARD",
+  "hero": {
+    "eyebrow": "AI call operations",
+    "headline": "Never miss",
+    "headlineAccent": "a call.",
+    "sub": "Your AI receptionist — answering, booking, syncing.",
+    "subSecond": "Built for service businesses.",
+    "primaryCta": { "label": "Start free trial", "href": "/register" },
+    "secondaryCta": { "label": "See it in action", "href": "#flow" },
+    "trustPills": ["No credit card", "Live in 10 minutes", "HIPAA-aligned"]
+  },
+  "flow": {
+    "eyebrow": "AI receptionist in action",
+    "headline": "One call.",
+    "headlineAccent": "Four moves.",
+    "sub": "Watch a live call become a booking and a CRM record — in seconds."
+  },
+  "industries": {
+    "eyebrow": "Industries",
+    "headline": "Tuned for",
+    "headlineAccent": "your industry."
+  },
+  "features": {
+    "eyebrow": "Features",
+    "headline": "Everything you need.",
+    "headlineAccent": "Nothing you don't."
+  },
+  "packages": {
+    "eyebrow": "Packages",
+    "headline": "Bundled",
+    "headlineAccent": "playbooks.",
+    "sub": "Pre-built configurations for common service patterns."
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "headline": "Simple",
+    "headlineAccent": "pricing.",
+    "sub": "Start free. Cancel anytime.",
+    "trust": [
+      "SOC 2 controls",
+      "HIPAA-aligned",
+      "BAA available",
+      "US data residency",
+      "30+ languages"
+    ]
+  },
+  "addons": {
+    "eyebrow": "Add-ons",
+    "headline": "Customize",
+    "headlineAccent": "as you grow."
+  },
+  "cta": {
+    "eyebrow": "Ready when you are",
+    "headline": "Start",
+    "headlineAccent": "booking jobs.",
+    "sub": "Live in 10 minutes. 14-day free trial.",
+    "primaryCta": { "label": "Start free trial", "href": "/register" },
+    "secondaryCta": { "label": "Talk to sales", "href": "/login" }
+  },
+  "videoHint": {
+    "eyebrow": "Coming next",
+    "name": "Video intelligence",
+    "line": "joining the platform soon, for retail, hospitality and security teams. Calls remain our core focus."
+  },
+  "trustLogos": ["NORTHSTAR", "BRIGHTLINE", "HELIX", "STRATUS", "MERIDIAN", "ATLAS"]
+}
